@@ -1,7 +1,7 @@
 ﻿// TALK TO CHATGPT
 // ---------------
 // Author		: C. NEDELCU
-// Version		: 2.6.0
+// Version		: 3.0.0
 // Git repo 	: https://github.com/C-Nedelcu/talk-to-chatgpt
 // Chat GPT URL	: https://chat.openai.com/chat
 // How to use   : https://www.youtube.com/watch?v=VXkLQMEs3lA
@@ -938,10 +938,10 @@ function CN_InitScript() {
 		
 			// Logo / title
 			"<div style='padding: 4px 40px; border-bottom: 1px solid grey;'>" +
-				"<a href='https://github.com/C-Nedelcu/talk-to-chatgpt' " +
+				"<a href='https://github.com/beratekin/talking-bot/wiki/Talking-Bot' " +
 					"style='display: inline-block; font-size: 20px; line-height: 80%; padding: 8px 0;' " +
-					"target=_blank title='Visit project website'>TALK-TO-ChatGPT<br />" +
-					"<div style='text-align: right; font-size: 12px; color: grey'>V2.6.0</div>" +
+					"target=_blank title='Visit project website'>TALK-BOT<br />" +
+					"<div style='text-align: right; font-size: 12px; color: grey'>Bera & Elif & Nihal</div>" +
 				"</a>" +
 			"</div>" +
 			
