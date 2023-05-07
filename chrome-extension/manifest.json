@@ -2,7 +2,7 @@
 	"manifest_version": 3,
 	"name": "Talking-Bot",
 	"version": "3.0.0",
-	"description": "Talk to ChatGPT through your microphone and hear its responses with a voice. Uses speech recognition and text-to-speech technologies",
+	"description": "A talkig bot to make a conversation using ChatGPT. It is designed to make conversation flow.",
 	"action": {
 		"default_popup": "popup.html",
 		"default_icon": {              
