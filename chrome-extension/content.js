@@ -1,8 +1,8 @@
 ﻿// TALK TO CHATGPT
 // ---------------
-// Author		: C. NEDELCU
+// Author		: C. NEDELCU, Bera, Nihal, Elif
 // Version		: 3.0.0
-// Git repo 	: https://github.com/C-Nedelcu/talk-to-chatgpt
+// Git repo 	: https://github.com/beratekin/talking-bot
 // Chat GPT URL	: https://chat.openai.com/chat
 // How to use   : https://www.youtube.com/watch?v=VXkLQMEs3lA
 // Credits		: C. NEDELCU (code), pixelsoda (GUI), S. James (GUI)
