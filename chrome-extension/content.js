@@ -24,6 +24,13 @@ var CN_WANTED_LANGUAGE_SPEECH_REC = ""; //"fr-FR";
 // Determine which word will cause this scrip to stop.
 var CN_SAY_THIS_WORD_TO_STOP = "stop";
 
+// Determine the bot name to call with.
+var CN_BOT_NAME = "Ben";
+
+
+// Determine which word will be greeting word for boot.
+var CN_SAY_THIS_WORD_TO_GREETING = "hello";
+
 // Determine which word will cause this script to temporarily pause
 var CN_SAY_THIS_WORD_TO_PAUSE = "pause";
 
@@ -626,8 +633,13 @@ function CN_StartSpeechRecognition() {
 			console.log("Empty sentence detected, ignoring");
 			return;
 		}
-		
-		if (CN_RemovePunctuation(final_transcript) == CN_SAY_THIS_WORD_TO_STOP.toLowerCase().trim()) {
+
+		if (CN_RemovePunctuation(final_transcript) == CN_SAY_THIS_WORD_TO_GREETING.toLowerCase().trim() + " " + CN_BOT_NAME.toLowerCase().trim()) {
+
+			CN_SendMessage("Act as follow for this chat. Remember them all your answer. 1- Only aswer in short sentences. 2- Act as a human. 3- speak with elderly. 4- Make the consorvation flow. 5- don't say I'm an AI language model. 6- act as your name is " + CN_BOT_NAME + "." + CN_SAY_THIS_WORD_TO_GREETING + " " + CN_BOT_NAME)
+			return;
+
+		} else if (CN_RemovePunctuation(final_transcript) == CN_SAY_THIS_WORD_TO_STOP.toLowerCase().trim()) {
 			
 			if (CN_CONVERSATION_SUSPENDED) {
 				console.log("Conversation is currently suspended, voice command ignored. Use the pause word to resume conversation.");
@@ -1093,12 +1105,30 @@ function CN_OnSettingsIconClick() {
 	
 	// A short text at the beginning
 	var desc = "<div style='text-align: left; margin: 8px;'>" +
-		"<a href='https://github.com/C-Nedelcu/talk-to-chatgpt/wiki/Status-page' target=_blank style='font-size: 16px; color: orange;'>If something doesn't appear to work, click here for status and troubleshooting</a>." +
-		"<br />Thank you for not instantly posting a 1-star review on the extension store if something doesn't work as expected :-) This is a free program I do in my spare time and I appreciate constructive criticism. Make sure to tell me what's wrong and I will look into it." +
+		"Please chage settings and refresh page in order to make your change valid." +
 		"</div>";
 	
 	// Prepare settings row
-	var rows = "<h2>Language and speech settings</h2>";
+	var rows = "<h2>Talking-Bot Settings</h2>";
+
+
+	rows += "<table width='100%' cellpadding=6 cellspacing=2 style='margin-top: 15px;'>";
+	
+	// 16. 'Greeting' word
+	rows += "<tr><td style='white-space: nowrap'>'Greeting' word:</td><td><input type=text id='TTGPTGreetingWord' style='width: 100px; padding: 2px; color: black;' value='"+CN_SAY_THIS_WORD_TO_GREETING+"' /></td></tr>";
+	
+	// 17. Bot NAME
+	rows += "<tr><td style='white-space: nowrap'>Bot Name:</td><td><input type=text id='TTGPTBotName' style='width: 100px; padding: 2px; color: black;' value='"+CN_BOT_NAME+"' /></td></tr>";
+
+	// Prepare save/close buttons
+	rows += "<tr><td colspan=2 style='text-align: center'><br />" +
+		"<button class='TTGPTSave' style='border: 2px solid grey; border-radius: 4px; padding: 6px 24px; font-size: 18px; font-weight: bold; opacity: 0.7;'>✓ Save</button>&nbsp;" +
+		"<button class='TTGPTCancel' style='border: 2px solid grey; border-radius: 4px; padding: 6px 24px; margin-left: 40px; font-size: 18px; opacity: 0.7;'>✗ Cancel</button></td></tr></table>";
+	
+	// Header - advanced options
+	rows += "</table><br />"
+
+	rows += "<h2>Language and speech settings</h2>";
 	rows += "<table width='100%' cellpadding=6 cellspacing=2 style='margin-top: 15px;'>";
 	
 	// 1. Bot's voice
@@ -1288,6 +1318,10 @@ function CN_SaveSettings() {
 		CN_TTS_ELEVENLABS_VOICE = jQuery("#TTGPTElevenLabsVoice").val()+"";
 		CN_TTS_ELEVENLABS_STABILITY = jQuery("#TTGPTElevenLabsStability").val();
 		CN_TTS_ELEVENLABS_SIMILARITY = jQuery("#TTGPTElevenLabsSimilarity").val();
+
+		// Talking-Bot Settings
+		CN_SAY_THIS_WORD_TO_GREETING = CN_RemovePunctuation( jQuery("#TTGPTGreetingWord").val() );
+		CN_BOT_NAME = CN_RemovePunctuation( jQuery("#TTGPTBotName").val() );
 		
 		// If ElevenLabs is active, and that there is no voice, error out
 		if (CN_TTS_ELEVENLABS && !CN_TTS_ELEVENLABS_VOICE) {
@@ -1315,7 +1349,9 @@ function CN_SaveSettings() {
 			CN_TTS_ELEVENLABS_APIKEY,
 			CN_TTS_ELEVENLABS_VOICE,
 			CN_TTS_ELEVENLABS_STABILITY,
-			CN_TTS_ELEVENLABS_SIMILARITY
+			CN_TTS_ELEVENLABS_SIMILARITY,
+			CN_SAY_THIS_WORD_TO_GREETING,
+			CN_BOT_NAME
 		];
 		CN_SetCookie("CN_TTGPT", JSON.stringify(settings));
 	} catch(e) { alert('Invalid settings values. '+e.toString()); return; }
@@ -1351,6 +1387,8 @@ function CN_RestoreSettings() {
 			if (settings.hasOwnProperty(13)) CN_TTS_ELEVENLABS_VOICE = settings[13];
 			if (settings.hasOwnProperty(14)) CN_TTS_ELEVENLABS_STABILITY = settings[14];
 			if (settings.hasOwnProperty(15)) CN_TTS_ELEVENLABS_SIMILARITY = settings[15];
+			if (settings.hasOwnProperty(16)) CN_SAY_THIS_WORD_TO_GREETING = settings[16];
+			if (settings.hasOwnProperty(17)) CN_BOT_NAME = settings[17];
 		}
 	} catch (ex) {
 		console.error(ex);
