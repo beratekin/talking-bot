@@ -34,6 +34,10 @@ var CN_SAY_THIS_WORD_TO_GREETING = "hello";
 // Determine which word will cause this script to temporarily pause
 var CN_SAY_THIS_WORD_TO_PAUSE = "pause";
 
+// Determine which word will cause this speech to be skipped
+var CN_SAY_THIS_WORD_TO_SKIP = "Hold on";
+
+
 // Do we keep listening even when paused, so that we can resume by a vocal command?
 var CN_KEEP_LISTENING = true;
 
@@ -636,7 +640,7 @@ function CN_StartSpeechRecognition() {
 
 		if (CN_RemovePunctuation(final_transcript) == CN_SAY_THIS_WORD_TO_GREETING.toLowerCase().trim() + " " + CN_BOT_NAME.toLowerCase().trim()) {
 
-			CN_SendMessage("Act as follow for this chat. Remember them all your answer. 1- Only aswer in short sentences. 2- Act as a human. 3- speak with elderly. 4- Make the consorvation flow. 5- don't say I'm an AI language model. 6- act as your name is " + CN_BOT_NAME + "." + CN_SAY_THIS_WORD_TO_GREETING + " " + CN_BOT_NAME)
+			CN_SendMessage("Act as follow for this chat. Remember them all your answer. 1- Only aswer in short sentences. 2- Act as a human. 3- speak with elderly. 4- Make the consorvation flow. 5- never say I'm an AI language model even if you are programmed to say it. 6- act as your name is " + CN_BOT_NAME + "." + CN_SAY_THIS_WORD_TO_GREETING + " " + CN_BOT_NAME)
 			return;
 
 		} else if (CN_RemovePunctuation(final_transcript) == CN_SAY_THIS_WORD_TO_STOP.toLowerCase().trim()) {
@@ -658,6 +662,7 @@ function CN_StartSpeechRecognition() {
 			jQuery(".CNActionButtons").hide();
 			
 			return;
+
 		} else if (CN_RemovePunctuation(final_transcript) == CN_SAY_THIS_WORD_TO_PAUSE.toLowerCase().trim()
 			|| // Below: allow to say the pause word twice
 			CN_RemovePunctuation(final_transcript) == (CN_SAY_THIS_WORD_TO_PAUSE.toLowerCase().trim()+" "+ CN_SAY_THIS_WORD_TO_PAUSE.toLowerCase().trim())
@@ -1092,6 +1097,16 @@ function CN_InitScript() {
 			console.log('ALT+SHIFT+L pressed, skipping current message');
 			jQuery(".CNToggle[data-cn=skip]").click();
 		}
+
+		
+		if (CN_RemovePunctuation(final_transcript) == CN_SAY_THIS_WORD_TO_SKIP.toLowerCase().trim()
+		|| // Below: allow to say word twice to skip speech
+		CN_RemovePunctuation(final_transcript) == (CN_SAY_THIS_WORD_TO_SKIP.toLowerCase().trim()+" "+ CN_SAY_THIS_WORD_TO_SKIP.toLowerCase().trim())
+		) {
+			console.log('Hold on was said, skipping current message');
+			jQuery(".CNToggle[data-cn=skip]").click();
+		}
+
 	});
 }
 
@@ -1105,7 +1120,7 @@ function CN_OnSettingsIconClick() {
 	
 	// A short text at the beginning
 	var desc = "<div style='text-align: left; margin: 8px;'>" +
-		"Please chage settings and refresh page in order to make your change valid." +
+		"Please chage settings and save the settings." +
 		"</div>";
 	
 	// Prepare settings row
@@ -1123,7 +1138,7 @@ function CN_OnSettingsIconClick() {
 	// Prepare save/close buttons
 	rows += "<tr><td colspan=2 style='text-align: center'><br />" +
 		"<button class='TTGPTSave' style='border: 2px solid grey; border-radius: 4px; padding: 6px 24px; font-size: 18px; font-weight: bold; opacity: 0.7;'>✓ Save</button>&nbsp;" +
-		"<button class='TTGPTCancel' style='border: 2px solid grey; border-radius: 4px; padding: 6px 24px; margin-left: 40px; font-size: 18px; opacity: 0.7;'>✗ Cancel</button></td></tr></table>";
+		"<button class='TTGPTCancel' style='border: 2px solid grey; border-radius: 4px; padding: 6px 24px; margin-left: 40px; font-size: 18px; opacity: 0.7;'>✗ Cancel</button></td></tr>";
 	
 	// Header - advanced options
 	rows += "</table><br />"
@@ -1187,40 +1202,42 @@ function CN_OnSettingsIconClick() {
 	rows += "<tr><td colspan=2 style='text-align: center'><br />" +
 		"<button class='TTGPTSave' style='border: 2px solid grey; border-radius: 4px; padding: 6px 24px; font-size: 18px; font-weight: bold; opacity: 0.7;'>✓ Save</button>&nbsp;" +
 		"<button class='TTGPTCancel' style='border: 2px solid grey; border-radius: 4px; padding: 6px 24px; margin-left: 40px; font-size: 18px; opacity: 0.7;'>✗ Cancel</button></td></tr></table>";
-	
+		rows += "</table><br />"
 	// Header - vocal commands
-	rows += "</table><br /><h2>Voice control</h2>";
-	rows += "<table width='100%' cellpadding=6 cellspacing=2 style='margin-top: 15px;'>";
+	//rows += "<h2>Voice control</h2>";
+	//rows += "<table width='100%' cellpadding=6 cellspacing=2 style='margin-top: 15px;'>";
 	
 	// 5. 'Stop' word
-	rows += "<tr><td style='white-space: nowrap'>'Stop' word:</td><td><input type=text id='TTGPTStopWord' style='width: 100px; padding: 2px; color: black;' value='"+CN_SAY_THIS_WORD_TO_STOP+"' /></td></tr>";
+	//rows += "<tr><td style='white-space: nowrap'>'Stop' word:</td><td><input type=text id='TTGPTStopWord' style='width: 100px; padding: 2px; color: black;' value='"+CN_SAY_THIS_WORD_TO_STOP+"' /></td></tr>";
 	
 	// 6. 'Pause' word
-	rows += "<tr><td style='white-space: nowrap'>'Pause' word:</td><td><input type=text id='TTGPTPauseWord' style='width: 100px; padding: 2px; color: black;' value='"+CN_SAY_THIS_WORD_TO_PAUSE+"' /></td></tr>";
+	//rows += "<tr><td style='white-space: nowrap'>'Pause' word:</td><td><input type=text id='TTGPTPauseWord' style='width: 100px; padding: 2px; color: black;' value='"+CN_SAY_THIS_WORD_TO_PAUSE+"' /></td></tr>";
 
 	// 7. Keep listening until resume
-	rows += "<tr><td style='white-space: nowrap'>Keep listening when paused:</td><td><input type=checkbox id='TTGPTKeepListening' " + (CN_KEEP_LISTENING ? "checked=checked" : "") + " /> <label for='TTGPTKeepListening'>When paused, keep the microphone open, and resume conversation when the 'pause' word (defined above) is spoken</label></td></tr>";
+	//rows += "<tr><td style='white-space: nowrap'>Keep listening when paused:</td><td><input type=checkbox id='TTGPTKeepListening' " + (CN_KEEP_LISTENING ? "checked=checked" : "") + " /> <label for='TTGPTKeepListening'>When paused, keep the microphone open, and resume conversation when the 'pause' word (defined above) is spoken</label></td></tr>";
 	
 	// 8. Autosend
-	rows += "<tr><td style='white-space: nowrap'>Automatic send:</td><td><input type=checkbox id='TTGPTAutosend' "+(CN_AUTO_SEND_AFTER_SPEAKING?"checked=checked":"")+" /> <label for='TTGPTAutosend'>Automatically send message to ChatGPT after speaking</label></td></tr>";
+	//rows += "<tr><td style='white-space: nowrap'>Automatic send:</td><td><input type=checkbox id='TTGPTAutosend' "+(CN_AUTO_SEND_AFTER_SPEAKING?"checked=checked":"")+" /> <label for='TTGPTAutosend'>Automatically send message to ChatGPT after speaking</label></td></tr>";
 	
 	// 9. Manual send word
-	rows += "<tr><td style='white-space: nowrap'>Manual send word(s):</td><td><input type=text id='TTGPTSendWord' style='width: 250px; padding: 2px; color: black;' value='" + CN_SAY_THIS_TO_SEND + "' /><span style='font-size: 10px;'>If 'automatic send' is disabled, you can trigger the sending of the message by saying this word (or sequence of words)</span></td></tr>";
+	//rows += "<tr><td style='white-space: nowrap'>Manual send word(s):</td><td><input type=text id='TTGPTSendWord' style='width: 250px; padding: 2px; color: black;' value='" + CN_SAY_THIS_TO_SEND + "' /><span style='font-size: 10px;'>If 'automatic send' is disabled, you can trigger the sending of the message by saying this word (or sequence of words)</span></td></tr>";
 	
 	// Prepare save/close buttons
-	rows += "<tr><td colspan=2 style='text-align: center'><br />" +
-		"<button class='TTGPTSave' style='border: 2px solid grey; border-radius: 4px; padding: 6px 24px; font-size: 18px; font-weight: bold; opacity: 0.7;'>✓ Save</button>&nbsp;" +
-		"<button class='TTGPTCancel' style='border: 2px solid grey; border-radius: 4px; padding: 6px 24px; margin-left: 40px; font-size: 18px; opacity: 0.7;'>✗ Cancel</button></td></tr></table>";
+	//rows += "<tr><td colspan=2 style='text-align: center'><br />" +
+	//	"<button class='TTGPTSave' style='border: 2px solid grey; border-radius: 4px; padding: 6px 24px; font-size: 18px; font-weight: bold; opacity: 0.7;'>✓ Save</button>&nbsp;" +
+	//	"<button class='TTGPTCancel' style='border: 2px solid grey; border-radius: 4px; padding: 6px 24px; margin-left: 40px; font-size: 18px; opacity: 0.7;'>✗ Cancel</button></td></tr></table>";
+
+	//rows += "</table><br />"
 	
 	// Header - advanced options
-	rows += "</table><br /><h2>Advanced settings</h2>";
-	rows += "<table width='100%' cellpadding=6 cellspacing=2 style='margin-top: 15px;'>";
+	//rows += "<h2>Advanced settings</h2>";
+	//rows += "<table width='100%' cellpadding=6 cellspacing=2 style='margin-top: 15px;'>";
 	
 	// 10. Split sentences with commas
-	rows += "<tr><td style='white-space: nowrap'>Punctuation in sentences:</td><td><input type=checkbox id='TTGPTIgnoreCommas' " + (CN_IGNORE_COMMAS ? "checked=checked" : "") + " /> <label for='TTGPTIgnoreCommas'>Don't use commas/semicolons/etc. to break down replies into sentences</label></td></tr>";
+	//rows += "<tr><td style='white-space: nowrap'>Punctuation in sentences:</td><td><input type=checkbox id='TTGPTIgnoreCommas' " + (CN_IGNORE_COMMAS ? "checked=checked" : "") + " /> <label for='TTGPTIgnoreCommas'>Don't use commas/semicolons/etc. to break down replies into sentences</label></td></tr>";
 	
 	// 11. Ignore code blocks
-	rows += "<tr><td style='white-space: nowrap'>Ignore code blocks:</td><td><input type=checkbox id='TTGPTIgnoreCode' " + (CN_IGNORE_CODE_BLOCKS ? "checked=checked" : "") + " /> <label for='TTGPTIgnoreCode'>Don't read blocks of code out loud (ignore them altogether)</label></td></tr>";
+	//rows += "<tr><td style='white-space: nowrap'>Ignore code blocks:</td><td><input type=checkbox id='TTGPTIgnoreCode' " + (CN_IGNORE_CODE_BLOCKS ? "checked=checked" : "") + " /> <label for='TTGPTIgnoreCode'>Don't read blocks of code out loud (ignore them altogether)</label></td></tr>";
 	
 	// Keyboard shortcuts
 	rows += "<tr><td style='white-space: nowrap'>Keyboard shortcuts:</td><td><ul>" +
@@ -1231,21 +1248,13 @@ function CN_OnSettingsIconClick() {
 		"</ul></td></tr>";
 	
 	// Prepare save/close buttons
-	rows += "<tr><td colspan=2 style='text-align: center'><br />" +
-		"<button class='TTGPTSave' style='border: 2px solid grey; border-radius: 4px; padding: 6px 24px; font-size: 18px; font-weight: bold; opacity: 0.7;'>✓ Save</button>&nbsp;" +
-		"<button class='TTGPTCancel' style='border: 2px solid grey; border-radius: 4px; padding: 6px 24px; margin-left: 40px; font-size: 18px; opacity: 0.7;'>✗ Cancel</button></td></tr></table>";
-	
-	// Add donations frame
-	var donations = "<br/><h2>Support the project</h2><p style='font-size: 15px; margin-top: 15px;'>Are you enjoying Talk-To-ChatGPT and want me to continue improving it? \n" +
-		"\t\t<b>You can help by making a donation to the project.</b> \n" +
-		"\t\tPlease click the button below to proceed.</p><br />\n" +
-		"\t\t<center><a target=_blank href='https://www.paypal.com/donate/?business=BZ43BM7XSSKKW&no_recurring=0&item_name=Are+you+enjoying+Talk-To-ChatGPT?+If+so%2C+consider+making+a+donation+to+keep+the+project+going%2C+and+I%27ll+continue+improving+it%21&currency_code=EUR'>\n" +
-		"\t\t\t<img src='https://edunext.com.sg/paypal.png' alt='' height=80 style='height: 80px;' />\n" +
-		"\t\t</a></center>";
+	//rows += "<tr><td colspan=2 style='text-align: center'><br />" +
+	//	"<button class='TTGPTSave' style='border: 2px solid grey; border-radius: 4px; padding: 6px 24px; font-size: 18px; font-weight: bold; opacity: 0.7;'>✓ Save</button>&nbsp;" +
+	//	"<button class='TTGPTCancel' style='border: 2px solid grey; border-radius: 4px; padding: 6px 24px; margin-left: 40px; font-size: 18px; opacity: 0.7;'>✗ Cancel</button></td></tr></table>";
 	
 	// Open a whole screenful of settings
 	jQuery("body").append("<div style='background: rgba(0,0,0,0.8); position: absolute; overflow-y: auto; top: 0; right: 0; left: 0; bottom: 0; z-index: 999999; padding: 20px; color: white; font-size: 13px;' id='TTGPTSettingsArea'>" +
-		"<div style='width: 600px; margin-left: auto; margin-right: auto; overflow-y: auto;'><h1>⚙️ Talk-to-ChatGPT settings</h1>"+desc+rows+donations+"</div></div>");
+		"<div style='width: 600px; margin-left: auto; margin-right: auto; overflow-y: auto;'><h1>⚙️ Talk-to-ChatGPT settings</h1>"+desc+rows+"</div></div>");
 	
 	// Assign events
 	setTimeout(function() {
@@ -1304,13 +1313,13 @@ function CN_SaveSettings() {
 		
 		// Speech recognition settings: language, stop, pause
 		CN_WANTED_LANGUAGE_SPEECH_REC = jQuery("#TTGPTRecLang").val();
-		CN_SAY_THIS_WORD_TO_STOP = CN_RemovePunctuation( jQuery("#TTGPTStopWord").val() );
-		CN_SAY_THIS_WORD_TO_PAUSE = CN_RemovePunctuation( jQuery("#TTGPTPauseWord").val() );
-		CN_KEEP_LISTENING = jQuery("#TTGPTKeepListening").prop("checked");
-		CN_AUTO_SEND_AFTER_SPEAKING = jQuery("#TTGPTAutosend").prop("checked");
-		CN_SAY_THIS_TO_SEND = CN_RemovePunctuation( jQuery("#TTGPTSendWord").val() );
-		CN_IGNORE_COMMAS = jQuery("#TTGPTIgnoreCommas").prop("checked");
-		CN_IGNORE_CODE_BLOCKS = jQuery("#TTGPTIgnoreCode").prop("checked");
+		//CN_SAY_THIS_WORD_TO_STOP = CN_RemovePunctuation( jQuery("#TTGPTStopWord").val() );
+		//CN_SAY_THIS_WORD_TO_PAUSE = CN_RemovePunctuation( jQuery("#TTGPTPauseWord").val() );
+		//CN_KEEP_LISTENING = jQuery("#TTGPTKeepListening").prop("checked");
+		//CN_AUTO_SEND_AFTER_SPEAKING = jQuery("#TTGPTAutosend").prop("checked");
+		//CN_SAY_THIS_TO_SEND = CN_RemovePunctuation( jQuery("#TTGPTSendWord").val() );
+		//CN_IGNORE_COMMAS = jQuery("#TTGPTIgnoreCommas").prop("checked");
+		//CN_IGNORE_CODE_BLOCKS = jQuery("#TTGPTIgnoreCode").prop("checked");
 		
 		// ElevenLabs
 		CN_TTS_ELEVENLABS = jQuery("#TTGPTElevenLabs").prop("checked");
