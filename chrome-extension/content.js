@@ -24,19 +24,8 @@ var CN_WANTED_LANGUAGE_SPEECH_REC = ""; //"fr-FR";
 // Determine which word will cause this scrip to stop.
 var CN_SAY_THIS_WORD_TO_STOP = "stop";
 
-// Determine the bot name to call with.
-var CN_BOT_NAME = "Ben";
-
-
-// Determine which word will be greeting word for boot.
-var CN_SAY_THIS_WORD_TO_GREETING = "hello";
-
 // Determine which word will cause this script to temporarily pause
 var CN_SAY_THIS_WORD_TO_PAUSE = "pause";
-
-// Determine which word will cause this speech to be skipped
-var CN_SAY_THIS_WORD_TO_SKIP = "Hold on";
-
 
 // Do we keep listening even when paused, so that we can resume by a vocal command?
 var CN_KEEP_LISTENING = true;
@@ -515,23 +504,23 @@ function CN_CheckNewMessages() {
 // Send a message to the bot (will simply put text in the textarea and simulate a send button click)
 function CN_SendMessage(text) {
 	// Put message in textarea
-	jQuery("textarea.w-full").focus();
-	var existingText = jQuery("textarea.w-full").val();
+	jQuery("#prompt-textarea").focus();
+	var existingText = jQuery("#prompt-textarea").val();
 	
 	// Is there already existing text?
-	if (!existingText) jQuery("textarea.w-full").val(text);
-	else jQuery("textarea.w-full").val(existingText+" "+text);
+	if (!existingText) CN_SetTextareaValue(text);
+	else CN_SetTextareaValue(existingText+" "+text);
 	
 	// Change height in case
 	var fullText = existingText+" "+text;
 	var rows = Math.ceil( fullText.length / 88);
 	var height = rows * 24;
-	jQuery("textarea.w-full").css("height", height+"px");
+	jQuery("#prompt-textarea").css("height", height+"px");
 	
 	// Send the message, if autosend is enabled
-	jQuery("textarea.w-full").closest("div").find("button").prop("disabled", false);
+	jQuery("#prompt-textarea").closest("div").find("button").prop("disabled", false);
 	if (CN_AUTO_SEND_AFTER_SPEAKING) {
-		jQuery("textarea.w-full").closest("div").find("button").click();
+		jQuery("#prompt-textarea").closest("div").find("button").click();
 		
 		// Stop speech recognition until the answer is received
 		if (CN_SPEECHREC) {
@@ -662,7 +651,6 @@ function CN_StartSpeechRecognition() {
 			jQuery(".CNActionButtons").hide();
 			
 			return;
-
 		} else if (CN_RemovePunctuation(final_transcript) == CN_SAY_THIS_WORD_TO_PAUSE.toLowerCase().trim()
 			|| // Below: allow to say the pause word twice
 			CN_RemovePunctuation(final_transcript) == (CN_SAY_THIS_WORD_TO_PAUSE.toLowerCase().trim()+" "+ CN_SAY_THIS_WORD_TO_PAUSE.toLowerCase().trim())
@@ -719,7 +707,7 @@ function CN_StartSpeechRecognition() {
 			console.log("You said '"+ CN_SAY_THIS_TO_SEND+"' - the message will be sent");
 			
 			// Click button
-			jQuery("textarea.w-full").closest("div").find("button").click();
+			jQuery("#prompt-textarea").closest("div").find("button").click();
 		
 			// Stop speech recognition until the answer is received
 			if (CN_SPEECHREC) {
@@ -865,6 +853,26 @@ function CN_ToggleButtonClick() {
 	}
 }
 
+
+function CN_SetTextareaValue(text) {
+    const textarea = jQuery("#prompt-textarea")[0];
+    function setNativeValue(element, value) {
+      const { set: valueSetter } = Object.getOwnPropertyDescriptor(element, 'value') || {}
+      const prototype = Object.getPrototypeOf(element)
+      const { set: prototypeValueSetter } = Object.getOwnPropertyDescriptor(prototype, 'value') || {}
+
+      if (prototypeValueSetter && valueSetter !== prototypeValueSetter) {
+        prototypeValueSetter.call(element, value)
+      } else if (valueSetter) {
+        valueSetter.call(element, value)
+      } else {
+        throw new Error('The given element does not have a value setter')
+      }
+    }
+    setNativeValue(textarea, text)
+    textarea.dispatchEvent(new Event('input', { bubbles: true }))
+}
+
 // Start Talk-to-ChatGPT (Start button)
 function CN_StartTTGPT() {
 	// Play sound & start
@@ -896,7 +904,7 @@ function CN_StartTTGPT() {
 // Check we are on the correct page
 function CN_CheckCorrectPage() {
 	console.log("Checking we are on the correct page...");
-	var wrongPage = jQuery("textarea.w-full").length == 0; // no textarea... login page?
+	var wrongPage = jQuery("#prompt-textarea").length == 0; // no textarea... login page?
 	
 	if (wrongPage) {
 		// We are on the wrong page, keep checking
@@ -1097,16 +1105,6 @@ function CN_InitScript() {
 			console.log('ALT+SHIFT+L pressed, skipping current message');
 			jQuery(".CNToggle[data-cn=skip]").click();
 		}
-
-		
-		if (CN_RemovePunctuation(final_transcript) == CN_SAY_THIS_WORD_TO_SKIP.toLowerCase().trim()
-		|| // Below: allow to say word twice to skip speech
-		CN_RemovePunctuation(final_transcript) == (CN_SAY_THIS_WORD_TO_SKIP.toLowerCase().trim()+" "+ CN_SAY_THIS_WORD_TO_SKIP.toLowerCase().trim())
-		) {
-			console.log('Hold on was said, skipping current message');
-			jQuery(".CNToggle[data-cn=skip]").click();
-		}
-
 	});
 }
 
@@ -1307,7 +1305,7 @@ function CN_SaveSettings() {
 		var wantedVoiceIndex = jQuery("#TTGPTVoice").val();
 		var allVoices = speechSynthesis.getVoices();
 		CN_WANTED_VOICE = allVoices[wantedVoiceIndex];
-		CN_WANTED_VOICE_NAME = CN_WANTED_VOICE.lang+"-"+CN_WANTED_VOICE.name;
+		CN_WANTED_VOICE_NAME = CN_WANTED_VOICE ? CN_WANTED_VOICE.lang+"-"+CN_WANTED_VOICE.name : "";
 		CN_TEXT_TO_SPEECH_RATE = Number( jQuery("#TTGPTRate").val() );
 		CN_TEXT_TO_SPEECH_PITCH = Number( jQuery("#TTGPTPitch").val() );
 		
